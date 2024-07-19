@@ -127,7 +127,7 @@ const renderSongs = (array) => {
     .map((song) => {
       return `
       <li id="song-${song.id}" class="playlist-song">
-      <button class="playlist-song-info">
+      <button class="playlist-song-info" onclick="playSong(${song.id})">
           <span class="playlist-song-title">${song.title}</span>
 <span class="playlist-song-artist">${song.artist}</span>
 <span class="playlist-song-duration" >${song.duration}</span>
@@ -139,6 +139,18 @@ const renderSongs = (array) => {
     .join(""); // Chain the join() method with an empty string as the separator
   playlistSongs.innerHTML = songsHTML; // insert the li element into the ul element in the already provided HTML file
 };
+
+//play button so that it will play the current song when it is clicked on
+playButton.addEventListener("click", () => {
+  if (!userData?.currentSong) {
+    //if to check if userData?.currentSong is falsey
+    playSong(userData?.songs[0].id); //ensure the first song in the playlist is played first
+  } else {
+    playSong(userData?.currentSong.id); //ensures that the currently playing song will continue to play when the play button is clicked
+  }
+
+  audio.play();
+});
 
 // Call renderSongs to display the initial playlist
 renderSongs(userData?.songs);
