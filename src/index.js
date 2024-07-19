@@ -134,7 +134,7 @@ const pauseSong = () => {
   userData.songCurrentTime = audio.currentTime;
 };
 
-//next song and the previous song
+//next song
 const playNextSong = () => {
   if (userData?.currentSong === null) {
     //check if there's no current song playing in the userData object
@@ -146,7 +146,17 @@ const playNextSong = () => {
   }
 };
 
-const playPreviousSong = () => {};
+//previous song
+const playPreviousSong = () => {
+  if (userData?.currentSong === null)
+    return; // Check if there is no current song playing
+  else {
+    // If a song is currently playing, get the index of the current song
+    const currentSongIndex = getCurrentSongIndex(); //// The currentSongIndex can now be used to find the previous song in the playlist
+    const previousSong = userData?.songs[currentSongIndex - 1];
+    playSong(previousSong.id);
+  }
+};
 
 const renderSongs = (array) => {
   const songsHTML = array
@@ -190,6 +200,8 @@ renderSongs(userData?.songs);
 pauseButton.addEventListener("click", pauseSong);
 //next button
 nextButton.addEventListener("click", playNextSong);
+//previous button
+previousButton.addEventListener("click", playPreviousSong);
 
 //display songs in alphabetical order
 const sortSongs = () => {
