@@ -134,6 +134,20 @@ const pauseSong = () => {
   userData.songCurrentTime = audio.currentTime;
 };
 
+//next song and the previous song
+const playNextSong = () => {
+  if (userData?.currentSong === null) {
+    //check if there's no current song playing in the userData object
+    playSong(userData?.songs[0].id);
+  } else {
+    const currentSongIndex = getCurrentSongIndex();
+    const nextSong = userData?.songs[currentSongIndex + 1];
+    playSong(nextSong.id);
+  }
+};
+
+const playPreviousSong = () => {};
+
 const renderSongs = (array) => {
   const songsHTML = array
     .map((song) => {
@@ -174,6 +188,8 @@ renderSongs(userData?.songs);
 
 //pause button
 pauseButton.addEventListener("click", pauseSong);
+//next button
+nextButton.addEventListener("click", playNextSong);
 
 //display songs in alphabetical order
 const sortSongs = () => {
