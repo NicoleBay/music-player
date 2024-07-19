@@ -105,6 +105,13 @@ const playSong = (id) => {
   audio.play();
 };
 
+//functionality for pausing the displayed songs
+const pauseSong = () => {
+  userData.songCurrentTime = audio.currentTime;
+  playButton.classList.remove("playing");
+  audio.pause();
+};
+
 /* 
 const printGreeting = () => {
   //arrow function expression
@@ -121,6 +128,11 @@ const printMessage = (org) => {
 printMessage("freeCodeCamp");
 
 const addTwoNumbers = (num1, num2) => num1 + num2; arrow function expression with num1 and num2 as parameters */
+
+//  pausing the currently playing song
+const pauseSong = () => {
+  userData.songCurrentTime = audio.currentTime;
+};
 
 const renderSongs = (array) => {
   const songsHTML = array
@@ -140,9 +152,14 @@ const renderSongs = (array) => {
   playlistSongs.innerHTML = songsHTML; // insert the li element into the ul element in the already provided HTML file
 };
 
+//index of each song in the songs property of userData
+const getCurrentSongIndex = () => {
+  return userData?.songs.indexOf(userData?.currentSong); //returns the first index at which a given element can be found in the array
+};
+
 //play button so that it will play the current song when it is clicked on
 playButton.addEventListener("click", () => {
-  if (!userData?.currentSong) {
+  if (!userData?.currentSong === null) {
     //if to check if userData?.currentSong is falsey
     playSong(userData?.songs[0].id); //ensure the first song in the playlist is played first
   } else {
@@ -154,6 +171,9 @@ playButton.addEventListener("click", () => {
 
 // Call renderSongs to display the initial playlist
 renderSongs(userData?.songs);
+
+//pause button
+pauseButton.addEventListener("click", pauseSong);
 
 //display songs in alphabetical order
 const sortSongs = () => {
