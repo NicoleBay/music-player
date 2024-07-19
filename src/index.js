@@ -88,6 +88,23 @@ let userData = {
   songCurrentTime: 0,
 };
 
+//functionality for playing the displayed songs
+const playSong = (id) => {
+  const song = userData?.songs.find((song) => song.id === id); //This will iterate through the userData?.songs array, searching for a song that corresponds to the id passed into the playSong function.
+  audio.src = song.src; //audio element where to find the audio data for the selected song
+  audio.title = song.title; //audio element what to display as the title of the song
+  //check if no current song is playing or if the current song is different from the one that is about to be played
+  if (userData?.currentSong === null || userData?.currentSong.id !== song.id) {
+    audio.currentTime = 0;
+  } else {
+    audio.currentTime = userData?.songCurrentTime; //resume the current song at the point where it was paused
+  }
+  //update the current song being played as well as the appearance of the playButton element.
+  userData.currentSong = song;
+  playButton.classList.add("playing");
+  audio.play();
+};
+
 /* 
 const printGreeting = () => {
   //arrow function expression
