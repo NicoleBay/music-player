@@ -102,6 +102,9 @@ const playSong = (id) => {
   //update the current song being played as well as the appearance of the playButton element.
   userData.currentSong = song;
   playButton.classList.add("playing");
+  setPlayerDisplay();
+  playSong();
+  highlightCurrentSong();
   audio.play();
 };
 
@@ -129,11 +132,6 @@ printMessage("freeCodeCamp");
 
 const addTwoNumbers = (num1, num2) => num1 + num2; arrow function expression with num1 and num2 as parameters */
 
-//  pausing the currently playing song
-const pauseSong = () => {
-  userData.songCurrentTime = audio.currentTime;
-};
-
 //next song
 const playNextSong = () => {
   if (userData?.currentSong === null) {
@@ -157,6 +155,36 @@ const playPreviousSong = () => {
     playSong(previousSong.id);
   }
 };
+
+//display the current song title and artist in the player display
+const setPlayerDisplay = () => {
+  const playingSong = document.getElementById("player-song-title");
+  const songArtist = document.getElementById("player-song-artist");
+  // Access the current song's title and artist from userData
+  const currentTitle = userData?.currentSong?.title;
+  const currentArtist = userData?.currentSong?.artist;
+  // Update the song title and artist elements with the current song's information
+  playingSong.textContent = currentTitle ? currentTitle : "";
+  songArtist.textContent = currentArtist ? currentArtist : "";
+};
+
+//currently playing song highlighted in the playlist
+const highlightCurrentSong = () => {
+  const playlistSongElements = document.querySelectorAll(".playlist-song");
+  const songToHighlight = document.getElementById(
+    `song-${userData?.currentSong?.id}`
+  );
+};
+
+//remove the attribute
+playlistSongElements.forEach((songEl) => {
+  songEl.removeAttribute("aria-current");
+});
+
+//add the attribute back to the currently playing song
+if (songToHighlight) {
+  songToHighlight.setAttribute("aria-current", "true");
+}
 
 const renderSongs = (array) => {
   const songsHTML = array
