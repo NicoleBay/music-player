@@ -102,6 +102,8 @@ const playSong = (id) => {
   //update the current song being played as well as the appearance of the playButton element.
   userData.currentSong = song;
   playButton.classList.add("playing");
+  //calls:
+  setPlayButtonAccessibleText();
   setPlayerDisplay();
   playSong();
   highlightCurrentSong();
@@ -156,6 +158,18 @@ const playPreviousSong = () => {
   }
 };
 
+//shuffle songs and performing necessary state management updates after the shuffling
+const shuffle = () => {
+  userData?.songs.sort(() => Math.random() - 0.5); //randomize an array (subtract 0.5 from Math.random() which produces random values that are either positive or negative)
+  userData.currentSong = null;
+  userData.songCurrentTime = 0;
+  //calls:
+  renderSongs(userData?.songs);
+  pauseSong();
+  setPlayerDisplay();
+  setPlayButtonAccessibleText();
+};
+
 //display the current song title and artist in the player display
 const setPlayerDisplay = () => {
   const playingSong = document.getElementById("player-song-title");
@@ -204,6 +218,15 @@ const renderSongs = (array) => {
   playlistSongs.innerHTML = songsHTML; // insert the li element into the ul element in the already provided HTML file
 };
 
+//play button describes the current song or the first song in the playlist
+const setPlayButtonAccessibleText = () => {
+  const song = userData?.currentSong || userData?.songs[0]; //get first song
+  playButton.setAttribute(
+    "aria-label",
+    song?.title ? `Play ${song.title}` : "Play"
+  ); // attribute named "aria-label". Using a ternary, set the attribute value to Play ${song.title} or "Play" if song?.title is not available.
+};
+
 //index of each song in the songs property of userData
 const getCurrentSongIndex = () => {
   return userData?.songs.indexOf(userData?.currentSong); //returns the first index at which a given element can be found in the array
@@ -230,6 +253,8 @@ pauseButton.addEventListener("click", pauseSong);
 nextButton.addEventListener("click", playNextSong);
 //previous button
 previousButton.addEventListener("click", playPreviousSong);
+//shuffle button
+shuffleButton.addEventListener("click", shuffle);
 
 //display songs in alphabetical order
 const sortSongs = () => {
