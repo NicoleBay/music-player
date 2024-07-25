@@ -105,7 +105,6 @@ const playSong = (id) => {
   //calls:
   setPlayButtonAccessibleText();
   setPlayerDisplay();
-  playSong();
   highlightCurrentSong();
   audio.play();
 };
@@ -116,23 +115,6 @@ const pauseSong = () => {
   playButton.classList.remove("playing");
   audio.pause();
 };
-
-/* 
-const printGreeting = () => {
-  //arrow function expression
-  console.log("Hello there!");
-};
-
-printGreeting();
-
-const printMessage = (org) => {
-  arrow function expression with org as parameter
-  console.log(`${org} is awesome!`);
-};
-
-printMessage("freeCodeCamp");
-
-const addTwoNumbers = (num1, num2) => num1 + num2; arrow function expression with num1 and num2 as parameters */
 
 //next song
 const playNextSong = () => {
@@ -193,6 +175,12 @@ const deleteSong = (id) => {
     resetButton.ariaLabel = "Reset playlist";
     resetButton.appendChild(resetText); //added as a child
     playlistSongs.appendChild(resetButton); //added as a child
+    resetButton.addEventListener("click", () => {
+      userData.songs = [...allSongs]; //reset the playlist to its original state, spread allSongs into an array and assign it to userData.songs
+      renderSongs(sortSongs()); //render the songs again in alphabetical order
+      setPlayButtonAccessibleText(); //play button's accessible text
+      resetButton.remove(); //Remove the reset button from the playlist}); //reset functionality
+    });
   }
 };
 
@@ -214,17 +202,17 @@ const highlightCurrentSong = () => {
   const songToHighlight = document.getElementById(
     `song-${userData?.currentSong?.id}`
   );
+
+  //remove the attribute
+  playlistSongElements.forEach((songEl) => {
+    songEl.removeAttribute("aria-current");
+  });
+
+  //add the attribute back to the currently playing song
+  if (songToHighlight) {
+    songToHighlight.setAttribute("aria-current", "true");
+  }
 };
-
-//remove the attribute
-playlistSongElements.forEach((songEl) => {
-  songEl.removeAttribute("aria-current");
-});
-
-//add the attribute back to the currently playing song
-if (songToHighlight) {
-  songToHighlight.setAttribute("aria-current", "true");
-}
 
 const renderSongs = (array) => {
   const songsHTML = array
@@ -254,24 +242,19 @@ const setPlayButtonAccessibleText = () => {
 };
 
 //index of each song in the songs property of userData
-const getCurrentSongIndex = () => {
-  return userData?.songs.indexOf(userData?.currentSong); //returns the first index at which a given element can be found in the array
-};
+const getCurrentSongIndex = () =>
+  userData?.songs.indexOf(userData?.currentSong);
+//returns the first index at which a given element can be found in the array
 
 //play button so that it will play the current song when it is clicked on
 playButton.addEventListener("click", () => {
-  if (!userData?.currentSong === null) {
+  if (userData?.currentSong === null) {
     //if to check if userData?.currentSong is falsey
     playSong(userData?.songs[0].id); //ensure the first song in the playlist is played first
   } else {
     playSong(userData?.currentSong.id); //ensures that the currently playing song will continue to play when the play button is clicked
   }
-
-  audio.play();
 });
-
-// Call renderSongs to display the initial playlist
-renderSongs(userData?.songs);
 
 //pause button
 pauseButton.addEventListener("click", pauseSong);
@@ -281,6 +264,23 @@ nextButton.addEventListener("click", playNextSong);
 previousButton.addEventListener("click", playPreviousSong);
 //shuffle button
 shuffleButton.addEventListener("click", shuffle);
+//play next song automatically
+audio.addEventListener("ended", () => {
+  const currentSongIndex = getCurrentSongIndex(); //check if there is a next song to play
+  const nextSongExists = userData?.songs[currentSongIndex + 1] !== undefined;
+  if (nextSongExists) {
+    //automatically play the next song when the current song ends
+    playNextSong();
+  } else {
+    userData.currentSong = null;
+    userData.songCurrentTime = 0;
+    //call:  to correctly update the player
+    pauseSong();
+    setPlayerDisplay();
+    highlightCurrentSong();
+    setPlayButtonAccessibleText();
+  }
+});
 
 //display songs in alphabetical order
 const sortSongs = () => {
@@ -293,6 +293,8 @@ const sortSongs = () => {
     }
     return 0; //leave the order of the two elements unchanged
   });
+  return userData?.songs;
 };
 
 renderSongs(sortSongs()); //change roder of songs
+setPlayButtonAccessibleText();
